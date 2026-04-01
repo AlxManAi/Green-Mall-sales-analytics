@@ -1,20 +1,66 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Green Mall BI Analytics 📊
 
-# Run and deploy your AI Studio app
+Профессиональная BI-система для анализа продаж торгового центра "Green Mall" в США. Приложение сочетает в себе классический интерактивный дашборд и мощного AI-ассистента на базе Google Gemini.
 
-This contains everything you need to run your app locally.
+## 🚀 Основные возможности
 
-View your app in AI Studio: https://ai.studio/apps/42cbc489-b354-40ab-8969-0409b97661a3
+### 📈 Интерактивный Дашборд
+- **Ключевые метрики (KPI):** Выручка, количество продаж, уникальные клиенты и средний чек.
+- **Визуализация трендов:** График помесячной выручки с автоматическим прогнозированием на 7 месяцев вперед.
+- **Анализ категорий:** Распределение выручки по категориям товаров.
+- **Рейтинги:** Топ-10 товаров и городов по объему продаж.
+- **Глобальные фильтры:** Фильтрация всех данных по городам, категориям и временным интервалам.
 
-## Run Locally
+### 🤖 AI-Ассистент (Gemini 3 Flash)
+- **Natural Language Queries:** Задавайте вопросы на естественном языке (например, "Какие продажи в Нью-Йорке за прошлый месяц?").
+- **Tool Calling:** ИИ самостоятельно выбирает нужные функции для получения актуальных данных из базы Supabase.
+- **Автоматическая визуализация:** Ассистент не только отвечает текстом, но и строит графики или таблицы прямо в чате.
+- **Глубокий анализ:** ИИ интерпретирует данные, выделяет аномалии и дает рекомендации на русском языке.
 
-**Prerequisites:**  Node.js
+## 🛠 Технологический стек
 
+- **Frontend:** React 18, Vite, TypeScript.
+- **Styling:** Tailwind CSS (современный, чистый интерфейс).
+- **Charts:** Recharts (адаптивные и интерактивные графики).
+- **Backend/DB:** Supabase (PostgreSQL) + Хранимые процедуры (RPC) для сложных расчетов.
+- **AI Integration:** Google Gemini API (`@google/genai`) с поддержкой Function Calling.
+- **Animations:** Motion (плавные переходы и интерактивность).
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## ⚙️ Установка и запуск
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/your-username/green-mall-bi.git
+   cd green-mall-bi
+   ```
+
+2. **Установите зависимости:**
+   ```bash
+   npm install
+   ```
+
+3. **Настройте переменные окружения (.env):**
+   Создайте файл `.env` и добавьте туда свои ключи:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_KEY=your_supabase_anon_key
+   GEMINI_API_KEY=your_google_ai_studio_key
+   ```
+
+4. **Настройте базу данных:**
+   Выполните SQL-скрипт из файла `supabase_rpc.sql` в SQL Editor вашего проекта Supabase. Это создаст необходимые таблицы и функции.
+
+5. **Запустите проект:**
+   ```bash
+   npm run dev
+   ```
+
+## 📝 Структура проекта
+
+- `src/components/` — UI компоненты (Дашборд, Чат, KPI).
+- `src/services/` — Логика взаимодействия с БД (`dataService`) и ИИ (`aiService`).
+- `src/lib/` — Конфигурация Supabase и утилиты.
+- `supabase_rpc.sql` — Все необходимые SQL-запросы для бэкенда.
+
+---
+Разработано с использованием передовых технологий AI-аналитики.
