@@ -47,3 +47,9 @@ export interface GenderCategoryAnalysis {
   total_revenue: number;
   sales_count: number;
 }
+
+export interface MonthlySalesByCategory {
+  month: string;
+  category_name: string;
+  revenue: number;
+}

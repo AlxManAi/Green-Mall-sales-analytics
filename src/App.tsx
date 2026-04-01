@@ -5,7 +5,7 @@ import { SalesCharts } from './components/SalesCharts';
 import { FilterBar } from './components/FilterBar';
 import { ChatAssistant } from './components/ChatAssistant';
 import { dataService } from './services/dataService';
-import { DashboardKPIs, RevenueByCategory, MonthlyRevenue, TopProduct, TopCity } from './types';
+import { DashboardKPIs, RevenueByCategory, MonthlyRevenue, TopProduct, TopCity, MonthlySalesByCategory } from './types';
 import { motion } from 'motion/react';
 import { supabase } from './lib/supabase';
 
@@ -31,6 +31,7 @@ export default function App() {
   const [monthlyData, setMonthlyData] = useState<MonthlyRevenue[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
   const [topCities, setTopCities] = useState<TopCity[]>([]);
+  const [monthlySalesByCategory, setMonthlySalesByCategory] = useState<MonthlySalesByCategory[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -62,12 +63,13 @@ export default function App() {
 
     try {
       // Fetch essential data first
-      const [m, c, d, p, ct] = await Promise.all([
+      const [m, c, d, p, ct, msc] = await Promise.all([
         dataService.getDashboardKPIs(filters).catch(e => { console.error('KPIs Error:', e); return metrics; }),
         dataService.getRevenueByCategory(filters).catch(e => { console.error('Category Error:', e); return []; }),
         dataService.getMonthlyRevenue(filters).catch(e => { console.error('Monthly Error:', e); return []; }),
         dataService.getTopProducts({ lim: 10, ...filters }).catch(e => { console.error('Products Error:', e); return []; }),
         dataService.getTopCities({ lim: 10, ...filters }).catch(e => { console.error('Cities Error:', e); return []; }),
+        dataService.getMonthlySalesByCategory(filters).catch(e => { console.error('Monthly Category Error:', e); return []; }),
       ]);
       
       setMetrics(m);
@@ -75,6 +77,7 @@ export default function App() {
       setMonthlyData(d);
       setTopProducts(p);
       setTopCities(ct);
+      setMonthlySalesByCategory(msc);
 
       // Fetch lists for filters if empty
       if (cities.length === 0 || categories.length === 0) {
@@ -180,6 +183,7 @@ export default function App() {
             monthlyData={monthlyData} 
             topProducts={topProducts}
             topCities={topCities}
+            monthlySalesByCategory={monthlySalesByCategory}
             loading={loading} 
           />
         </section>

@@ -7,7 +7,8 @@ import {
   TopCity, 
   TopSeller, 
   DiscountAnalysis, 
-  GenderCategoryAnalysis 
+  GenderCategoryAnalysis,
+  MonthlySalesByCategory
 } from '../types';
 
 const sanitizeFilters = (args: any) => {
@@ -102,6 +103,13 @@ export const dataService = {
   async getGenderCategoryAnalysis(args?: any): Promise<GenderCategoryAnalysis[]> {
     const filters = sanitizeFilters(args);
     const { data, error } = await supabase.rpc('gender_category_analysis', filters);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getMonthlySalesByCategory(args?: any): Promise<MonthlySalesByCategory[]> {
+    const filters = sanitizeFilters(args);
+    const { data, error } = await supabase.rpc('monthly_sales_by_category', filters);
     if (error) throw error;
     return data || [];
   }

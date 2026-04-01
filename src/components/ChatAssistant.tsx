@@ -317,6 +317,49 @@ export const ChatAssistant: React.FC = () => {
       );
     }
 
+    if (toolName === 'getMonthlySalesByCategory') {
+      const months: { [key: string]: any } = {};
+      data.forEach((item: any) => {
+        if (!months[item.month]) months[item.month] = { month: item.month };
+        months[item.month][item.category_name] = item.revenue;
+      });
+      const chartData = Object.values(months).sort((a: any, b: any) => a.month.localeCompare(b.month));
+      const categories = Array.from(new Set(data.map((d: any) => d.category_name)));
+
+      return (
+        <div className="mt-4 space-y-4">
+          <div className="h-[250px] w-full bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="month" fontSize={10} axisLine={false} tickLine={false} />
+                <YAxis fontSize={10} axisLine={false} tickLine={false} tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`} />
+                <Tooltip formatter={(val: number) => formatCurrency(val)} />
+                {categories.map((cat: any, index: number) => (
+                  <Line 
+                    key={cat} 
+                    type="monotone" 
+                    dataKey={cat} 
+                    stroke={COLORS[index % COLORS.length]} 
+                    strokeWidth={2} 
+                    dot={false} 
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 text-[10px] font-bold uppercase text-slate-400">
+            {categories.map((cat: any, index: number) => (
+              <div key={cat} className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                {cat}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     return null;
   };
 

@@ -13,7 +13,8 @@ import {
   PieChart,
   Pie,
 } from 'recharts';
-import { RevenueByCategory, MonthlyRevenue, TopProduct, TopCity } from '../types';
+import { XCircle } from 'lucide-react';
+import { RevenueByCategory, MonthlyRevenue, TopProduct, TopCity, MonthlySalesByCategory } from '../types';
 import { formatCurrency } from '../lib/utils';
 
 interface SalesChartsProps {
@@ -21,6 +22,7 @@ interface SalesChartsProps {
   monthlyData: MonthlyRevenue[];
   topProducts: TopProduct[];
   topCities: TopCity[];
+  monthlySalesByCategory: MonthlySalesByCategory[];
   loading: boolean;
 }
 
@@ -31,6 +33,7 @@ export const SalesCharts: React.FC<SalesChartsProps> = ({
   monthlyData, 
   topProducts, 
   topCities, 
+  monthlySalesByCategory,
   loading 
 }) => {
   if (loading) {
@@ -73,6 +76,21 @@ export const SalesCharts: React.FC<SalesChartsProps> = ({
   };
 
   const forecastData = generateForecast();
+
+  // Transform monthlySalesByCategory for Multi-line chart
+  const getMultiLineData = () => {
+    const months: { [key: string]: any } = {};
+    monthlySalesByCategory.forEach(item => {
+      if (!months[item.month]) {
+        months[item.month] = { month: item.month };
+      }
+      months[item.month][item.category_name] = item.revenue;
+    });
+    return Object.values(months).sort((a, b) => a.month.localeCompare(b.month));
+  };
+
+  const multiLineData = getMultiLineData();
+  const categories = Array.from(new Set(monthlySalesByCategory.map(d => d.category_name)));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -169,6 +187,52 @@ export const SalesCharts: React.FC<SalesChartsProps> = ({
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* 5. Multi-line Chart: Monthly Sales by Category */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-2">
+        <h3 className="text-lg font-semibold text-slate-900 mb-6">Динамика продаж по категориям (Multi-line)</h3>
+        <div className="h-[400px] flex items-center justify-center">
+          {multiLineData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={multiLineData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} 
+                  formatter={(value: number) => [formatCurrency(value), 'Выручка']} 
+                />
+                {categories.map((cat, index) => (
+                  <Line 
+                    key={cat as string} 
+                    type="monotone" 
+                    dataKey={cat as string} 
+                    stroke={COLORS[index % COLORS.length]} 
+                    strokeWidth={2} 
+                    dot={false}
+                    activeDot={{ r: 6 }}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="text-slate-400 text-sm font-medium flex flex-col items-center gap-2">
+              <XCircle className="w-8 h-8 opacity-20" />
+              <span>Нет данных для отображения за выбранный период</span>
+            </div>
+          )}
+        </div>
+        {multiLineData.length > 0 && (
+          <div className="mt-4 flex flex-wrap justify-center gap-4">
+            {categories.map((cat, index) => (
+              <div key={cat as string} className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                <span className="text-xs font-medium text-slate-600">{cat as string}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
-};
+}

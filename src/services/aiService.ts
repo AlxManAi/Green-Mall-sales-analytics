@@ -40,7 +40,8 @@ export const aiService = {
 - "Города", "Где больше продаж" -> getTopCities()
 - "Продавцы", "Лучший продавец" -> getTopSellers()
 - "Скидки", "Влияние скидок" -> getDiscountAnalysis()
-- "Пол продавца", "Разница между М и Ж" -> getGenderCategoryAnalysis()`,
+- "Пол продавца", "Разница между М и Ж" -> getGenderCategoryAnalysis()
+- "Продажи категорий по месяцам", "Сравнение категорий во времени", "Динамика категорий" -> getMonthlySalesByCategory()`,
         tools: [
           {
             functionDeclarations: [
@@ -143,6 +144,19 @@ export const aiService = {
                   type: Type.OBJECT,
                   properties: {
                     city_filter: { type: Type.STRING, description: "Название города для фильтрации" },
+                    start_date: { type: Type.STRING, description: "Начальная дата (ГГГГ-ММ-ДД)" },
+                    end_date: { type: Type.STRING, description: "Конечная дата (ГГГГ-ММ-ДД)" }
+                  }
+                }
+              },
+              {
+                name: "getMonthlySalesByCategory",
+                description: "Получить выручку по месяцам в разрезе категорий. Позволяет сравнивать динамику разных категорий. Можно фильтровать по городу, категории и датам.",
+                parameters: {
+                  type: Type.OBJECT,
+                  properties: {
+                    city_filter: { type: Type.STRING, description: "Название города для фильтрации" },
+                    category_filter: { type: Type.STRING, description: "Название категории для фильтрации" },
                     start_date: { type: Type.STRING, description: "Начальная дата (ГГГГ-ММ-ДД)" },
                     end_date: { type: Type.STRING, description: "Конечная дата (ГГГГ-ММ-ДД)" }
                   }
